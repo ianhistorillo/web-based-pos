@@ -1,45 +1,61 @@
-import React, { useState } from 'react';
-import Layout from '../components/layout/Layout';
-import { useOrder } from '../context/OrderContext';
-import { Clock, Search, Printer } from 'lucide-react';
-import ReceiptModal from '../components/receipt/ReceiptModal';
+import React, { useState } from "react";
+import Layout from "../components/layout/Layout";
+import { useOrder } from "../context/OrderContext";
+import { Clock, Search, Printer, CreditCard } from "lucide-react";
+import ReceiptModal from "../components/receipt/ReceiptModal";
 
 const OrdersPage: React.FC = () => {
-  const { orders, getOrderById } = useOrder();
-  const [searchTerm, setSearchTerm] = useState('');
+  const { orders, getOrderById, payOrder } = useOrder();
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'canceled'>('all');
-  
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "completed" | "canceled" | "unpaid"
+  >("all");
+
+  const filteredOrders = orders
+    .filter((order) => {
+      const matchesSearch = order.id
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesStatus =
+        statusFilter === "all" || order.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
-  
+
   const getStatusBadgeClasses = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'canceled':
-        return 'bg-red-100 text-red-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "canceled":
+        return "bg-red-100 text-red-800";
+      case "unpaid":
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
-  
+
+  const handlePayOrder = (orderId: string) => {
+    if (window.confirm("Mark this order as paid?")) {
+      payOrder(orderId);
+    }
+  };
+
   const orderToView = selectedOrder ? getOrderById(selectedOrder) : undefined;
 
   return (
@@ -50,7 +66,7 @@ const OrdersPage: React.FC = () => {
           <p className="text-gray-600">View and manage your orders</p>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-200">
           <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
@@ -66,7 +82,7 @@ const OrdersPage: React.FC = () => {
                 className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             <div>
               <select
                 value={statusFilter}
@@ -75,39 +91,64 @@ const OrdersPage: React.FC = () => {
               >
                 <option value="all">All Orders</option>
                 <option value="completed">Completed</option>
+                <option value="unpaid">Unpaid</option>
                 <option value="canceled">Canceled</option>
               </select>
             </div>
           </div>
         </div>
-        
+
         {filteredOrders.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Order ID
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Date
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Status
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Table
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Items
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Total
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredOrders.map(order => (
+                {filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       #{order.id.slice(-5)}
@@ -119,24 +160,42 @@ const OrdersPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusBadgeClasses(order.status)}`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusBadgeClasses(
+                          order.status
+                        )}`}
+                      >
                         {order.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {order.tableId ? `Table ${order.tableId}` : "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {order.items.length} items
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      ₱{order.total.toFixed(2)}
+                      ${order.total.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => setSelectedOrder(order.id)}
-                        className="text-blue-600 hover:text-blue-900 flex items-center justify-end"
-                      >
-                        <Printer className="h-4 w-4 mr-1" />
-                        Receipt
-                      </button>
+                      <div className="flex justify-end space-x-3">
+                        {order.status === "unpaid" && (
+                          <button
+                            onClick={() => handlePayOrder(order.id)}
+                            className="text-green-600 hover:text-green-900 flex items-center"
+                          >
+                            <CreditCard className="h-4 w-4 mr-1" />
+                            Pay
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setSelectedOrder(order.id)}
+                          className="text-blue-600 hover:text-blue-900 flex items-center"
+                        >
+                          <Printer className="h-4 w-4 mr-1" />
+                          Receipt
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -149,11 +208,11 @@ const OrdersPage: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       {selectedOrder && orderToView && (
-        <ReceiptModal 
-          order={orderToView} 
-          onClose={() => setSelectedOrder(null)} 
+        <ReceiptModal
+          order={orderToView}
+          onClose={() => setSelectedOrder(null)}
         />
       )}
     </Layout>

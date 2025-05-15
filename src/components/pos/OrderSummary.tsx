@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { Order } from '../../types';
-import { useOrder } from '../../context/OrderContext';
-import { Trash2, Minus, Plus, Printer, RefreshCw } from 'lucide-react';
-import ReceiptModal from '../receipt/ReceiptModal';
+import React, { useState } from "react";
+import { Order } from "../../types";
+import { useOrder } from "../../context/OrderContext";
+import { Trash2, Minus, Plus, Printer, RefreshCw } from "lucide-react";
+import ReceiptModal from "../receipt/ReceiptModal";
 
 const OrderSummary: React.FC = () => {
-  const { 
-    currentOrder, 
-    updateOrderItem, 
-    removeOrderItem, 
-    applyDiscount, 
+  const {
+    currentOrder,
+    updateOrderItem,
+    removeOrderItem,
+    applyDiscount,
     completeOrder,
     cancelOrder,
-    createNewOrder
+    createNewOrder,
   } = useOrder();
-  
-  const [discountAmount, setDiscountAmount] = useState('0');
+
+  const [discountAmount, setDiscountAmount] = useState("0");
   const [showReceipt, setShowReceipt] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
 
@@ -46,14 +46,16 @@ const OrderSummary: React.FC = () => {
     applyDiscount(amount);
   };
 
-  const handleCompleteOrder = () => {
+  const handleCompleteOrder = (payNow: boolean) => {
     if (currentOrder.items.length === 0) {
       return;
     }
-    
-    setCompletedOrder({...currentOrder});
-    completeOrder();
-    setShowReceipt(true);
+
+    setCompletedOrder({ ...currentOrder });
+    completeOrder(payNow);
+    if (payNow) {
+      setShowReceipt(true);
+    }
   };
 
   return (
@@ -74,33 +76,44 @@ const OrderSummary: React.FC = () => {
           </div>
         ) : (
           <ul className="space-y-3">
-            {currentOrder.items.map(item => (
-              <li key={item.id} className="flex items-center justify-between py-2 border-b border-gray-100">
+            {currentOrder.items.map((item) => (
+              <li
+                key={item.id}
+                className="flex items-center justify-between py-2 border-b border-gray-100"
+              >
                 <div className="flex items-center">
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.id, item.quantity - 1)
+                      }
                       className="h-6 w-6 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
                     >
                       <Minus className="h-3.5 w-3.5 text-gray-600" />
                     </button>
-                    
-                    <span className="w-8 text-center font-medium">{item.quantity}</span>
-                    
+
+                    <span className="w-8 text-center font-medium">
+                      {item.quantity}
+                    </span>
+
                     <button
-                      onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.id, item.quantity + 1)
+                      }
                       className="h-6 w-6 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
                     >
                       <Plus className="h-3.5 w-3.5 text-gray-600" />
                     </button>
                   </div>
-                  
+
                   <div className="ml-4">
                     <p className="font-medium text-gray-800">{item.name}</p>
-                    <p className="text-sm text-gray-500">₱{item.price.toFixed(2)} each</p>
+                    <p className="text-sm text-gray-500">
+                      ₱{item.price.toFixed(2)} each
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-4">
                   <span className="font-medium">
                     ₱{(item.price * item.quantity).toFixed(2)}
@@ -124,18 +137,18 @@ const OrderSummary: React.FC = () => {
             <span>Subtotal</span>
             <span>₱{currentOrder.subtotal.toFixed(2)}</span>
           </div>
-          
+
           <div className="flex justify-between mt-1 text-gray-700">
             <span>Discount</span>
             <span>-₱{currentOrder.discount.toFixed(2)}</span>
           </div>
-          
+
           <div className="flex justify-between mt-2 text-lg font-bold">
             <span>Total</span>
             <span>₱{currentOrder.total.toFixed(2)}</span>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-200 pt-3">
           <div className="flex">
             <input
@@ -155,16 +168,24 @@ const OrderSummary: React.FC = () => {
             </button>
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <button
-            onClick={handleCompleteOrder}
+            onClick={() => handleCompleteOrder(true)}
             disabled={currentOrder.items.length === 0}
             className="w-full px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
-            Complete Order
+            Pay Now
           </button>
-          
+
+          <button
+            onClick={() => handleCompleteOrder(false)}
+            disabled={currentOrder.items.length === 0 || !currentOrder.tableId}
+            className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          >
+            Place Order (Pay Later)
+          </button>
+
           <button
             onClick={cancelOrder}
             className="w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
@@ -173,7 +194,7 @@ const OrderSummary: React.FC = () => {
           </button>
         </div>
       </div>
-      
+
       {showReceipt && completedOrder && (
         <ReceiptModal
           order={completedOrder}
@@ -185,18 +206,18 @@ const OrderSummary: React.FC = () => {
 };
 
 const ShoppingCart: React.FC<{ className?: string }> = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    className={className} 
-    fill="none" 
-    viewBox="0 0 24 24" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
     stroke="currentColor"
   >
-    <path 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      strokeWidth={1.5} 
-      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" 
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
     />
   </svg>
 );

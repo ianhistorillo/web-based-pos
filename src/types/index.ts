@@ -3,7 +3,7 @@ export interface User {
   username: string;
   password: string;
   name: string;
-  role: 'admin' | 'cashier';
+  role: "admin" | "cashier";
 }
 
 export interface MenuItem {
@@ -11,7 +11,7 @@ export interface MenuItem {
   name: string;
   price: number;
   category: string;
-  image?: string;
+  image?: string | File;
 }
 
 export interface OrderItem {
@@ -30,11 +30,21 @@ export interface Order {
   total: number;
   createdAt: string;
   createdBy: string;
-  status: 'pending' | 'completed' | 'canceled';
+  status: "pending" | "completed" | "canceled" | "unpaid";
+  tableId?: string;
+  paymentStatus: "unpaid" | "paid";
 }
 
 export interface Category {
   id: string;
   name: string;
   color: string;
+}
+
+export interface Table {
+  id: string;
+  number: number;
+  capacity: number;
+  status: "available" | "occupied" | "reserved";
+  currentOrderId?: string;
 }

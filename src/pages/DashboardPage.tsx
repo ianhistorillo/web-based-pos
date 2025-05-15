@@ -1,9 +1,15 @@
-import React from 'react';
-import Layout from '../components/layout/Layout';
-import { useOrder } from '../context/OrderContext';
-import { useMenu } from '../context/MenuContext';
-import { useAuth } from '../context/AuthContext';
-import { TrendingUp, ShoppingBag, Coffee, DollarSign, Clock } from 'lucide-react';
+import React from "react";
+import Layout from "../components/layout/Layout";
+import { useOrder } from "../context/OrderContext";
+import { useMenu } from "../context/MenuContext";
+import { useAuth } from "../context/AuthContext";
+import {
+  TrendingUp,
+  ShoppingBag,
+  Coffee,
+  DollarSign,
+  Clock,
+} from "lucide-react";
 
 const DashboardPage: React.FC = () => {
   const { orders } = useOrder();
@@ -11,33 +17,44 @@ const DashboardPage: React.FC = () => {
   const { user } = useAuth();
 
   // Calculate statistics
-  const completedOrders = orders.filter(order => order.status === 'completed');
-  const totalSales = completedOrders.reduce((sum, order) => sum + order.total, 0);
-  const averageOrderValue = completedOrders.length > 0 
-    ? totalSales / completedOrders.length 
-    : 0;
+  const completedOrders = orders.filter(
+    (order) => order.status === "completed"
+  );
+  const totalSales = completedOrders.reduce(
+    (sum, order) => sum + order.total,
+    0
+  );
+  const averageOrderValue =
+    completedOrders.length > 0 ? totalSales / completedOrders.length : 0;
 
   // Get recent orders
   const recentOrders = [...completedOrders]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
     .slice(0, 5);
 
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   return (
     <Layout title="Dashboard">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Welcome back, {user?.name}</h1>
-        <p className="text-gray-600">Here's what's happening with your store today.</p>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Welcome back, {user?.name}
+        </h1>
+        <p className="text-gray-600">
+          Here's what's happening with your store today.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -48,7 +65,9 @@ const DashboardPage: React.FC = () => {
             </div>
             <div className="ml-4">
               <h2 className="text-sm font-medium text-gray-500">Total Sales</h2>
-              <p className="text-2xl font-bold text-gray-900">${totalSales.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                ₱{totalSales.toFixed(2)}
+              </p>
             </div>
           </div>
         </div>
@@ -59,8 +78,12 @@ const DashboardPage: React.FC = () => {
               <ShoppingBag className="h-6 w-6 text-green-600" />
             </div>
             <div className="ml-4">
-              <h2 className="text-sm font-medium text-gray-500">Total Orders</h2>
-              <p className="text-2xl font-bold text-gray-900">{completedOrders.length}</p>
+              <h2 className="text-sm font-medium text-gray-500">
+                Total Orders
+              </h2>
+              <p className="text-2xl font-bold text-gray-900">
+                {completedOrders.length}
+              </p>
             </div>
           </div>
         </div>
@@ -71,8 +94,12 @@ const DashboardPage: React.FC = () => {
               <TrendingUp className="h-6 w-6 text-orange-600" />
             </div>
             <div className="ml-4">
-              <h2 className="text-sm font-medium text-gray-500">Avg. Order Value</h2>
-              <p className="text-2xl font-bold text-gray-900">${averageOrderValue.toFixed(2)}</p>
+              <h2 className="text-sm font-medium text-gray-500">
+                Avg. Order Value
+              </h2>
+              <p className="text-2xl font-bold text-gray-900">
+                ₱{averageOrderValue.toFixed(2)}
+              </p>
             </div>
           </div>
         </div>
@@ -84,7 +111,9 @@ const DashboardPage: React.FC = () => {
             </div>
             <div className="ml-4">
               <h2 className="text-sm font-medium text-gray-500">Menu Items</h2>
-              <p className="text-2xl font-bold text-gray-900">{menuItems.length}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {menuItems.length}
+              </p>
             </div>
           </div>
         </div>
@@ -96,23 +125,35 @@ const DashboardPage: React.FC = () => {
             <div className="px-6 py-4 border-b border-gray-100">
               <h2 className="font-medium text-gray-900">Recent Orders</h2>
             </div>
-            
+
             <div className="p-3">
               {recentOrders.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Order ID
                         </th>
-                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Time
                         </th>
-                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Items
                         </th>
-                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Total
                         </th>
                       </tr>
@@ -130,10 +171,11 @@ const DashboardPage: React.FC = () => {
                             </div>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+                            {order.items.length}{" "}
+                            {order.items.length === 1 ? "item" : "items"}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600">
-                            ${order.total.toFixed(2)}
+                            ₱{order.total.toFixed(2)}
                           </td>
                         </tr>
                       ))}
@@ -154,20 +196,24 @@ const DashboardPage: React.FC = () => {
             <div className="px-6 py-4 border-b border-gray-100">
               <h2 className="font-medium text-gray-900">Categories</h2>
             </div>
-            
+
             <div className="p-6">
               {categories.length > 0 ? (
                 <div className="space-y-4">
-                  {categories.map(category => {
-                    const itemsInCategory = menuItems.filter(item => item.category === category.id).length;
-                    
+                  {categories.map((category) => {
+                    const itemsInCategory = menuItems.filter(
+                      (item) => item.category === category.id
+                    ).length;
+
                     return (
                       <div key={category.id} className="flex items-center">
-                        <div 
+                        <div
                           className="w-3 h-3 rounded-full mr-3"
                           style={{ backgroundColor: category.color }}
                         />
-                        <span className="flex-1 text-gray-900">{category.name}</span>
+                        <span className="flex-1 text-gray-900">
+                          {category.name}
+                        </span>
                         <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
                           {itemsInCategory} items
                         </span>

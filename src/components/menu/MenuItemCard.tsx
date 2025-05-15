@@ -1,6 +1,6 @@
-import React from 'react';
-import { MenuItem, Category } from '../../types';
-import { Edit, Trash2 } from 'lucide-react';
+import React from "react";
+import { MenuItem, Category } from "../../types";
+import { Edit, Trash2 } from "lucide-react";
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -13,20 +13,29 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
   item,
   category,
   onEdit,
-  onDelete
+  onDelete,
 }) => {
-  const defaultImage = 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image';
-  
+  const defaultImage =
+    "https://placehold.co/400x300/e2e8f0/64748b?text=No+Image";
+
+  const imageUrl =
+    typeof item.image === "string"
+      ? item.image
+      : item.image instanceof File
+      ? URL.createObjectURL(item.image)
+      : defaultImage;
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:shadow-lg hover:-translate-y-1">
-      <div 
-        className="h-40 bg-cover bg-center"
-        style={{ 
-          backgroundImage: `url(${item.image || defaultImage})`,
-          backgroundColor: category?.color || '#e2e8f0'
+      <img
+        src={imageUrl}
+        alt={item.name}
+        className="w-full h-40 object-cover"
+        onError={(e) => {
+          e.currentTarget.src = defaultImage;
         }}
       />
-      
+
       <div className="p-4">
         <div className="flex justify-between items-start">
           <div>
@@ -35,20 +44,20 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
               ₱{item.price.toFixed(2)}
             </p>
           </div>
-          
+
           {category && (
-            <span 
-              className="text-xs px-2 py-1 rounded-full" 
-              style={{ 
+            <span
+              className="text-xs px-2 py-1 rounded-full"
+              style={{
                 backgroundColor: `${category.color}20`, // 20% opacity
-                color: category.color 
+                color: category.color,
               }}
             >
               {category.name}
             </span>
           )}
         </div>
-        
+
         <div className="mt-4 flex justify-end space-x-2">
           <button
             onClick={() => onEdit(item)}

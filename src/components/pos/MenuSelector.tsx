@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
-import { MenuItem, Category, OrderItem } from '../../types';
-import { useMenu } from '../../context/MenuContext';
-import { Search } from 'lucide-react';
+import React, { useState } from "react";
+import { MenuItem, Category, OrderItem } from "../../types";
+import { useMenu } from "../../context/MenuContext";
+import { Search } from "lucide-react";
 
 interface MenuSelectorProps {
-  onSelectItem: (item: Omit<OrderItem, 'id'>) => void;
+  onSelectItem: (item: Omit<OrderItem, "id">) => void;
 }
 
 const MenuSelector: React.FC<MenuSelectorProps> = ({ onSelectItem }) => {
   const { menuItems, categories } = useMenu();
-  const [activeCategory, setActiveCategory] = useState<string | 'all'>('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] = useState<string | "all">("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredItems = menuItems.filter(item => {
-    const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredItems = menuItems.filter((item) => {
+    const matchesCategory =
+      activeCategory === "all" || item.category === activeCategory;
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -23,12 +26,12 @@ const MenuSelector: React.FC<MenuSelectorProps> = ({ onSelectItem }) => {
       menuItemId: menuItem.id,
       name: menuItem.name,
       price: menuItem.price,
-      quantity: 1
+      quantity: 1,
     });
   };
 
   const getCategoryById = (id: string) => {
-    return categories.find(c => c.id === id);
+    return categories.find((c) => c.id === id);
   };
 
   return (
@@ -47,20 +50,20 @@ const MenuSelector: React.FC<MenuSelectorProps> = ({ onSelectItem }) => {
           />
         </div>
       </div>
-      
+
       <div className="flex overflow-x-auto py-2 px-3 border-b">
         <button
           className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap mr-2 transition-colors ${
-            activeCategory === 'all' 
-              ? 'bg-blue-100 text-blue-700' 
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            activeCategory === "all"
+              ? "bg-blue-100 text-blue-700"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
-          onClick={() => setActiveCategory('all')}
+          onClick={() => setActiveCategory("all")}
         >
           All Items
         </button>
-        
-        {categories.map(category => (
+
+        {categories.map((category) => (
           <button
             key={category.id}
             className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap mr-2 transition-colors ${
@@ -69,7 +72,8 @@ const MenuSelector: React.FC<MenuSelectorProps> = ({ onSelectItem }) => {
                 : `bg-gray-100 text-gray-700 hover:bg-gray-200`
             }`}
             style={{
-              backgroundColor: activeCategory === category.id ? category.color : undefined,
+              backgroundColor:
+                activeCategory === category.id ? category.color : undefined,
             }}
             onClick={() => setActiveCategory(category.id)}
           >
@@ -77,37 +81,59 @@ const MenuSelector: React.FC<MenuSelectorProps> = ({ onSelectItem }) => {
           </button>
         ))}
       </div>
-      
+
       <div className="flex-1 overflow-y-auto p-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredItems.length > 0 ? (
-          filteredItems.map(item => {
+          filteredItems.map((item) => {
             const category = getCategoryById(item.category);
-            const defaultImage = 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image';
-            
+            const defaultImage =
+              "https://placehold.co/400x300/e2e8f0/64748b?text=No+Image";
+
             return (
               <div
                 key={item.id}
                 className="bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform duration-200 hover:shadow-md hover:-translate-y-1"
                 onClick={() => handleItemClick(item)}
               >
-                <div 
-                  className="h-24 bg-cover bg-center"
-                  style={{ 
-                    backgroundImage: `url(${item.image || defaultImage})`,
-                    backgroundColor: category?.color || '#e2e8f0' 
-                  }}
-                />
-                
+                <div className="relative">
+                  <img
+                    src={
+                      typeof item.image === "string"
+                        ? item.image
+                        : item.image instanceof File
+                        ? URL.createObjectURL(item.image)
+                        : defaultImage
+                    }
+                    alt={item.name}
+                    className="w-full object-cover"
+                    style={{ height: "200px" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImage(
+                        typeof item.image === "string"
+                          ? item.image
+                          : item.image instanceof File
+                          ? URL.createObjectURL(item.image)
+                          : defaultImage
+                      );
+                    }}
+                  />
+                </div>
+
                 <div className="p-3">
-                  <h3 className="font-medium text-gray-900 truncate">{item.name}</h3>
+                  <h3 className="font-medium text-gray-900 truncate">
+                    {item.name}
+                  </h3>
                   <div className="flex justify-between items-center mt-1">
-                    <p className="text-green-600 font-semibold">₱{item.price.toFixed(2)}</p>
+                    <p className="text-green-600 font-semibold">
+                      ₱{item.price.toFixed(2)}
+                    </p>
                     {category && (
                       <span
                         className="text-xs px-1.5 py-0.5 rounded-full"
                         style={{
                           backgroundColor: `${category.color}20`, // 20% opacity
-                          color: category.color
+                          color: category.color,
                         }}
                       >
                         {category.name}
