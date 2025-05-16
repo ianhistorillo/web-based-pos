@@ -99,13 +99,13 @@ const OrderSummary: React.FC = () => {
                   
                   <div className="ml-4">
                     <p className="font-medium text-gray-800 dark:text-white">{item.name}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">${item.price.toFixed(2)} each</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">₱{item.price.toFixed(2)} each</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-4">
                   <span className="font-medium text-gray-900 dark:text-white">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ₱{(item.price * item.quantity).toFixed(2)}
                   </span>
                   <button
                     onClick={() => removeOrderItem(item.id)}
@@ -124,17 +124,17 @@ const OrderSummary: React.FC = () => {
         <div>
           <div className="flex justify-between text-gray-700 dark:text-gray-300">
             <span>Subtotal</span>
-            <span>${currentOrder.subtotal.toFixed(2)}</span>
+            <span>₱{currentOrder.subtotal.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between mt-1 text-gray-700 dark:text-gray-300">
             <span>Discount</span>
-            <span>-${currentOrder.discount.toFixed(2)}</span>
+            <span>-₱{currentOrder.discount.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between mt-2 text-lg font-bold text-gray-900 dark:text-white">
             <span>Total</span>
-            <span>${currentOrder.total.toFixed(2)}</span>
+            <span>₱{currentOrder.total.toFixed(2)}</span>
           </div>
         </div>
         

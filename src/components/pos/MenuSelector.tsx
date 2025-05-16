@@ -101,7 +101,7 @@ const MenuSelector: React.FC<MenuSelectorProps> = ({ onSelectItem }) => {
                 <div className="p-3">
                   <h3 className="font-medium text-gray-900 dark:text-white truncate">{item.name}</h3>
                   <div className="flex justify-between items-center mt-1">
-                    <p className="text-green-600 dark:text-green-400 font-semibold">${item.price.toFixed(2)}</p>
+                    <p className="text-green-600 dark:text-green-400 font-semibold">₱{item.price.toFixed(2)}</p>
                     {category && (
                       <span
                         className="text-xs px-1.5 py-0.5 rounded-full"
