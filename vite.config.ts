@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon-192x192.png', 'icon-512x512.png', 'favicon.ico'],
+      includeAssets: ['icon-192x192.png', 'icon-512x512.png', 'st-logo-4.png', 'favicon.ico'],
       manifest: {
         name: 'POS System',
         short_name: 'POS',
@@ -25,6 +25,12 @@ export default defineConfig({
           },
           {
             src: 'icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: 'st-logo-4.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'

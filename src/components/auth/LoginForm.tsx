@@ -26,8 +26,7 @@ const LoginForm: React.FC = () => {
       } else {
         setError('Invalid username or password');
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
       setError('An error occurred during login');
     } finally {
       setIsLoading(false);
@@ -35,28 +34,28 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-md w-full space-y-8 p-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center">
-            <Coffee className="h-10 w-10 text-blue-600" />
+          <div className="mx-auto h-46 w-46 rounded-full dark:bg-blue-900 flex items-center justify-center">
+            <img className="h-48 w-96 object-contain ..." src="/st-logo-1.png" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Sign in to your account</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Simple POS System
+          <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">Sign in to your account</h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            SinagTala POS System
           </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="rounded-md bg-red-50 p-4 mb-4">
-              <div className="text-sm text-red-700">{error}</div>
+            <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4 mb-4">
+              <div className="text-sm text-red-700 dark:text-red-200">{error}</div>
             </div>
           )}
           
           <div className="rounded-md -space-y-px">
             <div className="mb-4">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Username
               </label>
               <input
@@ -66,14 +65,14 @@ const LoginForm: React.FC = () => {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 focus:z-10 sm:text-sm"
                 placeholder="Username"
                 disabled={isLoading}
               />
             </div>
             
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Password
               </label>
               <input
@@ -83,7 +82,7 @@ const LoginForm: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 focus:z-10 sm:text-sm"
                 placeholder="Password"
                 disabled={isLoading}
               />
@@ -94,7 +93,7 @@ const LoginForm: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:bg-blue-400"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:bg-blue-400 dark:disabled:bg-blue-500/50"
             >
               {isLoading ? (
                 <>
@@ -107,13 +106,13 @@ const LoginForm: React.FC = () => {
             </button>
           </div>
           
-          <div className="text-sm text-center mt-4">
-            <p className="text-gray-600">
+          {/* <div className="text-sm text-center mt-4">
+            <p className="text-gray-600 dark:text-gray-400">
               Demo accounts: 
-              <span className="text-blue-600 ml-1">admin/admin123</span> or 
-              <span className="text-blue-600 ml-1">cashier/cashier123</span>
+              <span className="text-blue-600 dark:text-blue-400 ml-1">admin/admin123</span> or 
+              <span className="text-blue-600 dark:text-blue-400 ml-1">cashier/cashier123</span>
             </p>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

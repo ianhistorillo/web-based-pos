@@ -48,15 +48,15 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
             {category ? 'Edit Category' : 'Add Category'}
           </h2>
           <button 
             onClick={onCancel}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           >
             <X className="h-5 w-5" />
           </button>
@@ -64,7 +64,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Category Name
             </label>
             <input
@@ -74,12 +74,12 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
           
           <div className="mb-6">
-            <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="color" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Color
             </label>
             <div className="flex items-center">
@@ -89,14 +89,14 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                 name="color"
                 value={formData.color}
                 onChange={handleChange}
-                className="w-10 h-10 rounded cursor-pointer border border-gray-300"
+                className="w-10 h-10 rounded cursor-pointer border border-gray-300 dark:border-gray-600"
               />
               <input
                 type="text"
                 value={formData.color}
                 onChange={handleChange}
                 name="color"
-                className="ml-3 flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="ml-3 flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
               />
             </div>
           </div>
@@ -105,7 +105,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
               Cancel
             </button>

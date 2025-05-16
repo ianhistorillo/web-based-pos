@@ -7,7 +7,7 @@ import {
   TrendingUp,
   ShoppingBag,
   Coffee,
-  DollarSign,
+  PhilippinePeso,
   Clock,
 } from "lucide-react";
 
@@ -61,7 +61,7 @@ const DashboardPage: React.FC = () => {
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
           <div className="flex items-center">
             <div className="rounded-full p-3 bg-blue-100">
-              <DollarSign className="h-6 w-6 text-blue-600" />
+              <PhilippinePeso className="h-6 w-6 text-blue-600" />
             </div>
             <div className="ml-4">
               <h2 className="text-sm font-medium text-gray-500">Total Sales</h2>
