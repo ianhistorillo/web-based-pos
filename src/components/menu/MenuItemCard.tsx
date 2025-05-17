@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MenuItem, Category } from '../../types';
 import { Edit, Trash2 } from 'lucide-react';
+import { imageStore } from '../../lib/imageStore';
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -15,18 +16,26 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
   onEdit,
   onDelete
 }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const defaultImage = 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image';
-  
-  const imageUrl = typeof item.image === 'string' 
-    ? item.image 
-    : item.image instanceof File 
-      ? URL.createObjectURL(item.image)
-      : defaultImage;
+
+  useEffect(() => {
+    const loadImage = async () => {
+      if (item.image) {
+        const imageData = await imageStore.getImage(item.image);
+        if (imageData) {
+          setImageUrl(imageData);
+        }
+      }
+    };
+
+    loadImage();
+  }, [item.image]);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:shadow-lg hover:-translate-y-1">
       <img
-        src={imageUrl}
+        src={imageUrl || defaultImage}
         alt={item.name}
         className="w-full h-40 object-cover"
         onError={(e) => {
@@ -47,7 +56,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
             <span 
               className="text-xs px-2 py-1 rounded-full" 
               style={{ 
-                backgroundColor: `${category.color}20`, // 20% opacity
+                backgroundColor: `${category.color}20`,
                 color: category.color 
               }}
             >

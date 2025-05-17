@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MenuItem } from '../../types';
 import { useMenu } from '../../context/MenuContext';
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
+import { imageStore } from '../../lib/imageStore';
 
 interface MenuItemFormProps {
   item?: MenuItem;
@@ -16,50 +17,67 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({
 }) => {
   const { categories, addMenuItem, updateMenuItem } = useMenu();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const [formData, setFormData] = useState<Omit<MenuItem, 'id'>>({
     name: '',
     price: 0,
     category: '',
-    image: null,
+    image: '',
   });
 
   useEffect(() => {
-    if (item) {
-      setFormData({
-        name: item.name,
-        price: item.price,
-        category: item.category,
-        image: item.image || null,
-      });
+    const loadImage = async () => {
+      if (item) {
+        setFormData({
+          name: item.name,
+          price: item.price,
+          category: item.category,
+          image: item.image || '',
+        });
 
-      // Set preview URL if item has an image
-      if (item.image) {
-        if (typeof item.image === 'string') {
-          setPreviewUrl(item.image);
-        } else if (item.image instanceof File) {
-          setPreviewUrl(URL.createObjectURL(item.image));
+        if (item.image) {
+          const imageData = await imageStore.getImage(item.image);
+          if (imageData) {
+            setPreviewUrl(imageData);
+          }
         }
+      } else if (categories.length > 0) {
+        setFormData(prev => ({ ...prev, category: categories[0].id }));
       }
-    } else if (categories.length > 0) {
-      setFormData(prev => ({ ...prev, category: categories[0].id }));
-    }
+    };
+
+    loadImage();
   }, [item, categories]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Convert image to base64 string for persistence
+    if (!file) return;
+
+    try {
+      setIsProcessing(true);
+
+      // Convert image to base64
       const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setFormData(prev => ({
-          ...prev,
-          image: base64String,
-        }));
-        setPreviewUrl(base64String);
-      };
-      reader.readAsDataURL(file);
+      const imageData = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      // Save to IndexedDB and get ID
+      const imageId = await imageStore.saveImage(imageData);
+
+      setFormData(prev => ({
+        ...prev,
+        image: imageId,
+      }));
+      setPreviewUrl(imageData);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      alert('Failed to process image. Please try again.');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -73,10 +91,14 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (item) {
+      // If updating and image changed, delete old image
+      if (item.image && item.image !== formData.image) {
+        await imageStore.deleteImage(item.image);
+      }
       updateMenuItem(item.id, formData);
     } else {
       addMenuItem(formData);
@@ -164,8 +186,15 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({
               accept="image/*"
               name="image"
               onChange={handleImageChange}
+              disabled={isProcessing}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
             />
+            {isProcessing && (
+              <div className="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Processing image...
+              </div>
+            )}
           </div>
 
           {previewUrl && (
@@ -189,9 +218,17 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={isProcessing}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 dark:disabled:bg-blue-500/50"
             >
-              {item ? 'Update' : 'Add'} Item
+              {isProcessing ? (
+                <span className="flex items-center">
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Processing...
+                </span>
+              ) : (
+                `${item ? 'Update' : 'Add'} Item`
+              )}
             </button>
           </div>
         </form>
