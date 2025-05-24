@@ -18,6 +18,8 @@ const OrderSummary: React.FC = () => {
   const [discountAmount, setDiscountAmount] = useState('0');
   const [showReceipt, setShowReceipt] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
+  const [numberOfCustomers, setNumberOfCustomers] = useState(1);
+  const [discountType, setDiscountType] = useState<'none' | 'pwd' | 'senior'>('none');
 
   if (!currentOrder) {
     return (
@@ -37,13 +39,17 @@ const OrderSummary: React.FC = () => {
     updateOrderItem(id, newQuantity);
   };
 
-  const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDiscountAmount(e.target.value);
+  const calculateSpecialDiscount = () => {
+    if (discountType === 'none' || numberOfCustomers <= 0) return 0;
+    
+    const perPersonAmount = currentOrder.subtotal / numberOfCustomers;
+    const discountPerPerson = perPersonAmount * 0.20; // 20% discount
+    return discountPerPerson * numberOfCustomers;
   };
 
-  const handleDiscountApply = () => {
-    const amount = parseFloat(discountAmount) || 0;
-    applyDiscount(amount);
+  const handleApplySpecialDiscount = () => {
+    const discountAmount = calculateSpecialDiscount();
+    applyDiscount(discountAmount);
   };
 
   const handleCompleteOrder = (payNow: boolean) => {
@@ -138,19 +144,57 @@ const OrderSummary: React.FC = () => {
           </div>
         </div>
         
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-3 space-y-3">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Special Discount
+            </label>
+            <select
+              value={discountType}
+              onChange={(e) => setDiscountType(e.target.value as 'none' | 'pwd' | 'senior')}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+            >
+              <option value="none">No Discount</option>
+              <option value="pwd">PWD Discount (20%)</option>
+              <option value="senior">Senior Citizen Discount (20%)</option>
+            </select>
+          </div>
+
+          {discountType !== 'none' && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Number of {discountType === 'pwd' ? 'PWD' : 'Senior'} Customers
+              </label>
+              <div className="flex space-x-2">
+                <input
+                  type="number"
+                  min="1"
+                  value={numberOfCustomers}
+                  onChange={(e) => setNumberOfCustomers(Math.max(1, parseInt(e.target.value) || 1))}
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+                <button
+                  onClick={handleApplySpecialDiscount}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex">
             <input
               type="number"
               min="0"
               step="0.01"
               value={discountAmount}
-              onChange={handleDiscountChange}
+              onChange={(e) => setDiscountAmount(e.target.value)}
               className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-              placeholder="Discount amount"
+              placeholder="Additional discount amount"
             />
             <button
-              onClick={handleDiscountApply}
+              onClick={() => applyDiscount(parseFloat(discountAmount) || 0)}
               className="px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-r-md hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none"
             >
               Apply
